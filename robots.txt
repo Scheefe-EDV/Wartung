@@ -1,0 +1,105 @@
+# ================================================================
+# robots.txt für www.funkbasis.de
+# ================================================================
+# Ziel: AI-Crawler und Bots von session-intensiven Seiten fernhalten
+#       und Attachment-Scraping unterbinden.
+#
+# Hinweis: robots.txt wirkt nur bei Bots die sie respektieren.
+#          Das verteilte Scraper-Botnetz (getarnte Chrome-UAs)
+#          ignoriert sie – dafür greift die .htaccess-Regel.
+# ================================================================
+
+# ----------------------------------------------------------------
+# GPTBot (OpenAI) — 160.867 Requests/Tag, 12.540 Sessions
+# Crawlt massenhaft Nutzerprofile und Forum-Anhänge.
+# Komplett gesperrt, da kein nennenswerter Mehrwert für das Forum.
+# ----------------------------------------------------------------
+User-agent: GPTBot
+Disallow: /
+
+# ----------------------------------------------------------------
+# Applebot — 21.217 Requests/Tag, 12.898 Sessions
+# Erzeugt proportional die meisten Sessions (fast 1 pro Request).
+# Komplett gesperrt.
+# ----------------------------------------------------------------
+User-agent: Applebot
+Disallow: /
+
+# ----------------------------------------------------------------
+# OAI-SearchBot (OpenAI) — 31.418 Requests/Tag, nur 249 Sessions
+# Verhält sich technisch korrekt (Cookie-Handling), aber erzeugt
+# erhebliche Last. Erlaubt auf Topic-Seiten, gesperrt auf Rest.
+# ----------------------------------------------------------------
+User-agent: OAI-SearchBot
+Disallow: /download/
+Disallow: /memberlist.php
+Disallow: /search.php
+Disallow: /posting.php
+Disallow: /ucp.php
+Disallow: /app.php
+
+# ----------------------------------------------------------------
+# meta-externalagent (Facebook) — 5.239 Requests, 3.937 Sessions
+# Fast jeder Request erzeugt eine neue Session.
+# ----------------------------------------------------------------
+User-agent: meta-externalagent
+Disallow: /
+
+# ----------------------------------------------------------------
+# PerplexityBot — 6.801 Requests/Tag
+# ----------------------------------------------------------------
+User-agent: PerplexityBot
+Disallow: /download/
+Disallow: /memberlist.php
+Disallow: /search.php
+Disallow: /posting.php
+Disallow: /ucp.php
+
+# ----------------------------------------------------------------
+# Amazonbot — 13.599 Requests/Tag, nur 3 Sessions (vorbildlich)
+# Trotzdem von Anhängen und Profilen fernhalten.
+# ----------------------------------------------------------------
+User-agent: Amazonbot
+Disallow: /download/
+Disallow: /memberlist.php
+Disallow: /search.php
+Disallow: /posting.php
+Disallow: /ucp.php
+
+# ----------------------------------------------------------------
+# DotBot (Moz) — 6.110 Requests/Tag, 0 Sessions (korrekt)
+# Anhänge und Profil trotzdem sperren (kein SEO-Nutzen).
+# ----------------------------------------------------------------
+User-agent: DotBot
+Disallow: /download/
+Disallow: /memberlist.php
+Disallow: /search.php
+
+# ----------------------------------------------------------------
+# Googlebot — erlaubt, aber Anhänge und dynamische Seiten gesperrt
+# ----------------------------------------------------------------
+User-agent: Googlebot
+Disallow: /download/
+Disallow: /memberlist.php
+Disallow: /posting.php
+Disallow: /ucp.php
+Disallow: /search.php
+
+# ----------------------------------------------------------------
+# Bingbot — wie Googlebot
+# ----------------------------------------------------------------
+User-agent: bingbot
+Disallow: /download/
+Disallow: /memberlist.php
+Disallow: /posting.php
+Disallow: /ucp.php
+Disallow: /search.php
+
+# ----------------------------------------------------------------
+# Alle übrigen Bots: Anhänge und Verwaltungsseiten sperren
+# ----------------------------------------------------------------
+User-agent: *
+Disallow: /download/
+Disallow: /posting.php
+Disallow: /ucp.php
+Disallow: /app.php

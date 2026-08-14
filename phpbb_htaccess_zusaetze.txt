@@ -1,0 +1,76 @@
+# ================================================================
+# Bot-Schutz für funkbasis.de — Zusätze zur phpBB-.htaccess
+# ================================================================
+# ANLEITUNG: Diese Regeln VOR die bestehenden phpBB-Zeilen in die
+# .htaccess im Forum-Webroot einfügen (vor "DirectoryIndex index.php")
+# ================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # ----------------------------------------------------------------
+    # 1. Download-Anhänge: nur erlauben wenn Referer eine echte
+    #    Forenseite nennt (viewtopic, viewforum, posting, search, ucp).
+    #
+    #    Hintergrund: Das verteilte Scraper-Botnetz (5.700+ IPs,
+    #    getarnte Chrome-UAs 103–129) setzt als Referer ausschließlich
+    #    "https://www.funkbasis.de/" (Homepage) – echte User kommen
+    #    immer von einer Topic- oder Forenunterseite.
+    #    Kein gültiger phpBB-Seiten-Referer → 403.
+    # ----------------------------------------------------------------
+    RewriteCond %{REQUEST_URI} !^/_errordocs/ [NC]
+    RewriteCond %{REQUEST_URI} ^/download/file\.php [NC]
+    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?funkbasis\.de/(viewtopic|viewforum|posting|search|ucp|memberlist)\.php [NC]
+    RewriteRule ^ - [F,L]
+
+    # ----------------------------------------------------------------
+    # 2. AI-Crawler sperren (erzeugen massenhaft phpBB-Sessions,
+    #    da sie keine Cookies senden).
+    #
+    #    GPTBot:           160.867 Requests/Tag, 12.540 Sessions
+    #    Applebot:          21.217 Requests/Tag, 12.898 Sessions
+    #    meta-externalagent: 5.239 Requests/Tag,  3.937 Sessions
+    #    PerplexityBot:      6.801 Requests/Tag, erzeugt 1 Session
+    #                        (trotzdem hier gesperrt wg. Last)
+    #
+    #    Hinweis: Ergänzend diese Bots auch in phpBB unter
+    #    ACP → Board-Konfiguration → Board-Features → Bots verwalten
+    #    eintragen – dann legt phpBB für erkannte Bots gar keine
+    #    Session mehr an (greift bei Anfragen, die .htaccess durchkommen).
+    # ----------------------------------------------------------------
+    RewriteCond %{REQUEST_URI} !^/_errordocs/ [NC]
+    RewriteCond %{HTTP_USER_AGENT} GPTBot [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} Applebot [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} meta-externalagent [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} PerplexityBot [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ClaudeBot [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} anthropic-ai [NC]
+    RewriteRule ^ - [F,L]
+
+    # ----------------------------------------------------------------
+    # 3. Generisches Scraper-Botnetz sperren.
+    #
+    #    UA-String: "Mozilla/5.0 (compatible; crawler)" — exakter Match,
+    #    da der Substring "crawler" in zu vielen echten UAs vorkommt.
+    #    Botnetz-Merkmal: 31.574 verschiedene IPs in 6 Tagen,
+    #    fast jede Anfrage von einer neuen IP → jede Anfrage = neue Session.
+    # ----------------------------------------------------------------
+    RewriteCond %{REQUEST_URI} !^/_errordocs/ [NC]
+    RewriteCond %{HTTP_USER_AGENT} ^Mozilla/5\.0 \(compatible; crawler\)$ [NC]
+    RewriteRule ^ - [F,L]
+
+    # ----------------------------------------------------------------
+    # 4. Alte Chrome-Versionen sperren (optional, siehe Hinweis).
+    #
+    #    Aktuelle Chrome-Version: 133–147. Bots tarnen sich oft als
+    #    Chrome 103–129. Echte User mit alten Versionen werden hier
+    #    ebenfalls gesperrt — Abwägung nötig.
+    #
+    #    Hinweis: Bots passen ihre UA-Strings schnell an. Diese Regel
+    #    ist ein temporärer Filter, kein dauerhafter Schutz.
+    # ----------------------------------------------------------------
+    # RewriteCond %{REQUEST_URI} !^/_errordocs/ [NC]
+    # RewriteCond %{HTTP_USER_AGENT} "Chrome/([0-9]{1,2}|1[0-2][0-9])\." [NC]
+    # RewriteRule ^ - [F,L]
+
+</IfModule>

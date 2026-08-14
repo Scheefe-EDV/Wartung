@@ -1,0 +1,7 @@
+# Schützt den geoblock-Ordner vor direktem Web-Zugriff
+# Apache 2.4
+Require all denied
+
+# Apache 2.2 Fallback (auskommentieren falls 2.4-Zeile 500er gibt)
+# Order deny,allow
+# Deny from all

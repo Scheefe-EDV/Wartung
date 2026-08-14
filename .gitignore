@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Editoren
+.idea/
+.vscode/
+*.swp
+
+# Lokale Claude-Code-Einstellungen (maschinenspezifisch)
+.claude/settings.local.json
+
+# ── Regenerierbare Geoblock-Daten ────────────────────────────────
+# Werden alle von geoblock/update_geoblock.sh neu geladen/erzeugt.
+geoblock/*.zone
+geoblock/*.mmdb
+geoblock/*.mmdb.gz
+# Altlast: Apache-"Deny from"-Listen, durch geo_block.php ersetzt
+geoblock/geoblock_deny_apache2*.conf
+
+# ── Server-Logs ──────────────────────────────────────────────────
+# Enthalten IP-Adressen – niemals ins Repo.
+*access.log*
+*error.log*
+*.log
